@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>스토리 가드 (Story Guard)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Pretendard:wght@400;600;700&display=swap');
+        body { font-family: 'Pretendard', sans-serif; background-color: #f8fafc; }
+    </style>
+</head>
+<body class="py-10 px-4">
+    <div class="max-w-3xl mx-auto">
+        <div class="text-center mb-10">
+            <h1 class="text-4xl font-extrabold text-slate-800 flex justify-center items-center gap-2">
+                <i data-lucide="shield-check" class="text-blue-600 w-10 h-10"></i> 스토리 가드
+            </h1>
+            <p class="text-slate-500 mt-2">작가의 설정을 지키는 가장 완벽한 방법</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                <h2 class="text-xl font-bold mb-4 flex items-center gap-2 text-slate-700">
+                    <i data-lucide="user-plus" class="w-5 h-5 text-blue-500"></i> 인물 등록
+                </h2>
+                <div class="space-y-3">
+                    <input id="nameInput" type="text" placeholder="이름 (예: 주인공)" class="w-full p-3 border rounded-xl focus:ring-2 focus:ring-blue-400 outline-none transition">
+                    <input id="birthInput" type="number" placeholder="출생 연도 (예: 244)" class="w-full p-3 border rounded-xl focus:ring-2 focus:ring-blue-400 outline-none transition">
+                    <button onclick="addChar()" class="w-full bg-blue-600 text-white font-bold p-3 rounded-xl hover:bg-blue-700 transition active:scale-95 shadow-lg shadow-blue-100">
+                        등록하기
+                    </button>
+                </div>
+            </div>
+
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                <h2 class="text-xl font-bold mb-4 flex items-center gap-2 text-slate-700">
+                    <i data-lucide="search" class="w-5 h-5 text-green-500"></i> 설정 오류 체크
+                </h2>
+                <div class="space-y-3">
+                    <input id="checkName" type="text" placeholder="체크할 인물 이름" class="w-full p-3 border rounded-xl focus:ring-2 focus:ring-green-400 outline-none transition">
+                    <input id="checkYear" type="number" placeholder="소설 속 현재 연도" class="w-full p-3 border rounded-xl focus:ring-2 focus:ring-green-400 outline-none transition">
+                    <button onclick="checkLogic()" class="w-full bg-green-600 text-white font-bold p-3 rounded-xl hover:bg-green-700 transition active:scale-95 shadow-lg shadow-green-100">
+                        지금 확인하기
+                    </button>
+                </div>
+                <div id="resultBox" class="mt-4 p-4 rounded-xl hidden animate-pulse"></div>
+            </div>
+        </div>
+
+        <div class="mt-10 bg-white p-8 rounded-2xl shadow-sm border border-slate-200">
+            <h2 class="text-xl font-bold mb-6 flex items-center gap-2 text-slate-700">
+                <i data-lucide="users" class="w-6 h-6 text-indigo-500"></i> 등장인물 도감
+            </h2>
+            <div id="charList" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+                </div>
+        </div>
+    </div>
+
+    <script>
+        // 데이터 초기화 (로컬스토리지에서 불러오기)
+        let characters = JSON.parse(localStorage.getItem('story_guard_data')) || [];
+
+        // 아이콘 렌더링
+        lucide.createIcons();
+        updateList();
+
+        // 1. 인물 추가 함수
+        function addChar() {
+            const name = document.getElementById('nameInput').value.trim();
+            const birth = parseInt(document.getElementById('birthInput').value);
+
+            if(!name || isNaN(birth)) {
+                alert("이름과 연도를 제대로 입력해주세요, 형님!");
+                return;
+            }
+
+            characters.push({ name, birth });
+            localStorage.setItem('story_guard_data', JSON.stringify(characters));
+            
+            document.getElementById('nameInput').value = '';
+            document.getElementById('birthInput').value = '';
+            updateList();
+        }
+
+        // 2. 리스트 업데이트
+        function updateList() {
+            const listDiv = document.getElementById('charList');
+            if(characters.length === 0) {
+                listDiv.innerHTML = '<p class="col-span-full text-slate-400 text-center py-4 text-sm">등록된 인물이 없습니다.</p>';
+                return;
+            }
+
+            listDiv.innerHTML = characters.map((c, index) => `
+                <div class="bg-slate-50 border border-slate-100 p-3 rounded-xl flex flex-col items-center relative group">
+                    <span class="font-bold text-slate-700">${c.name}</span>
+                    <span class="text-xs text-slate-400">${c.birth}년생</span>
+                    <button onclick="deleteChar(${index})" class="absolute top-1 right-1 opacity-0 group-hover:opacity-100 text-red-400 hover:text-red-600 transition">
+                        <i data-lucide="x-circle" class="w-4 h-4"></i>
+                    </button>
+                </div>
+            `).join('');
+            lucide.createIcons();
+        }
+
+        // 3. 인물 삭제
+        function deleteChar(index) {
+            if(confirm("이 인물을 삭제하시겠습니까?")) {
+                characters.splice(index, 1);
+                localStorage.setItem('story_guard_data', JSON.stringify(characters));
+                updateList();
+            }
+        }
+
+        // 4. 논리 체크 로직
+        function checkLogic() {
+            const name = document.getElementById('checkName').value.trim();
+            const year = parseInt(document.getElementById('checkYear').value);
+            const resBox = document.getElementById('resultBox');
+
+            const char = characters.find(c => c.name === name);
+            resBox.classList.remove('hidden', 'bg-red-50', 'bg-orange-50', 'bg-green-50', 'text-red-600', 'text-orange-600', 'text-green-600');
+
+            if(!char) {
+                resBox.innerText = "❌ 도감에 없는 인물입니다. 먼저 등록해주세요!";
+                resBox.classList.add('hidden');
+                alert("이름을 확인해주세요!");
+                return;
+            }
+
+            const age = year - char.birth;
+
+            if(age < 0) {
+                resBox.innerHTML = `<strong>⚠️ 타임 패러독스 발생!</strong><br>${name}은 ${year}년에 아직 태어나기 전입니다. (탄생까지 ${Math.abs(age)}년 남음)`;
+                resBox.classList.add('bg-red-50', 'text-red-600');
+            } else if(age > 100) {
+                resBox.innerHTML = `<strong>👵 고령 주의보!</strong><br>${year}년 기준 ${name}의 나이는 ${age}세입니다. 살아있는 게 맞는지 확인이 필요합니다!`;
+                resBox.classList.add('bg-orange-50', 'text-orange-600');
+            } else {
+                resBox.innerHTML = `<strong>✅ 설정 정상</strong><br>${year}년에 ${name}은 ${age}세입니다. 아주 적절한 시기군요.`;
+                resBox.classList.add('bg-green-50', 'text-green-600');
+            }
+            resBox.classList.remove('hidden');
+        }
+    </script>
+</body>
+</html>
