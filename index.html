@@ -3,145 +3,175 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>스토리 가드 (Story Guard)</title>
+    <title>스토리 가드 Pro (Story Guard)</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Pretendard:wght@400;600;700&display=swap');
-        body { font-family: 'Pretendard', sans-serif; background-color: #f8fafc; }
-    </style>
+        body { font-family: 'Pretendard', sans-serif; background-color: #f1f5f9; }
+        .relation-line { stroke: #cbd5e1; stroke-width: 2; fill: none; }
+    </script>
 </head>
 <body class="py-10 px-4">
-    <div class="max-w-3xl mx-auto">
+    <div class="max-w-5xl mx-auto">
         <div class="text-center mb-10">
             <h1 class="text-4xl font-extrabold text-slate-800 flex justify-center items-center gap-2">
-                <i data-lucide="shield-check" class="text-blue-600 w-10 h-10"></i> 스토리 가드
+                <i data-lucide="shield-check" class="text-blue-600 w-10 h-10"></i> 스토리 가드 Pro
             </h1>
-            <p class="text-slate-500 mt-2">작가의 설정을 지키는 가장 완벽한 방법</p>
+            <p class="text-slate-500 mt-2">성격과 관계까지 완벽하게 감시합니다</p>
         </div>
 
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
             <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-                <h2 class="text-xl font-bold mb-4 flex items-center gap-2 text-slate-700">
-                    <i data-lucide="user-plus" class="w-5 h-5 text-blue-500"></i> 인물 등록
+                <h2 class="text-lg font-bold mb-4 flex items-center gap-2 text-slate-700">
+                    <i data-lucide="user-plus" class="w-5 h-5 text-blue-500"></i> 인물 설정
                 </h2>
                 <div class="space-y-3">
-                    <input id="nameInput" type="text" placeholder="이름 (예: 주인공)" class="w-full p-3 border rounded-xl focus:ring-2 focus:ring-blue-400 outline-none transition">
-                    <input id="birthInput" type="number" placeholder="출생 연도 (예: 244)" class="w-full p-3 border rounded-xl focus:ring-2 focus:ring-blue-400 outline-none transition">
-                    <button onclick="addChar()" class="w-full bg-blue-600 text-white font-bold p-3 rounded-xl hover:bg-blue-700 transition active:scale-95 shadow-lg shadow-blue-100">
-                        등록하기
-                    </button>
+                    <input id="nameInput" type="text" placeholder="이름" class="w-full p-2.5 border rounded-xl outline-none focus:ring-2 focus:ring-blue-400">
+                    <input id="birthInput" type="number" placeholder="출생 연도" class="w-full p-2.5 border rounded-xl outline-none focus:ring-2 focus:ring-blue-400">
+                    <input id="traitInput" type="text" placeholder="성격 (예: 냉혈한, 정의로움)" class="w-full p-2.5 border rounded-xl outline-none focus:ring-2 focus:ring-blue-400">
+                    <button onclick="addChar()" class="w-full bg-blue-600 text-white font-bold p-2.5 rounded-xl hover:bg-blue-700 transition">등록</button>
+                </div>
+
+                <h2 class="text-lg font-bold mt-8 mb-4 flex items-center gap-2 text-slate-700 border-t pt-4">
+                    <i data-lucide="git-pull-request" class="w-5 h-5 text-purple-500"></i> 관계 설정
+                </h2>
+                <div class="space-y-3">
+                    <select id="char1" class="w-full p-2.5 border rounded-xl outline-none"></select>
+                    <div class="text-center text-xs text-slate-400 font-bold">와(과)</div>
+                    <select id="char2" class="w-full p-2.5 border rounded-xl outline-none"></select>
+                    <input id="relationType" type="text" placeholder="관계 (예: 라이벌, 부부)" class="w-full p-2.5 border rounded-xl outline-none">
+                    <button onclick="addRelation()" class="w-full bg-purple-600 text-white font-bold p-2.5 rounded-xl hover:bg-purple-700 transition">관계 맺기</button>
                 </div>
             </div>
 
-            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-                <h2 class="text-xl font-bold mb-4 flex items-center gap-2 text-slate-700">
-                    <i data-lucide="search" class="w-5 h-5 text-green-500"></i> 설정 오류 체크
-                </h2>
-                <div class="space-y-3">
-                    <input id="checkName" type="text" placeholder="체크할 인물 이름" class="w-full p-3 border rounded-xl focus:ring-2 focus:ring-green-400 outline-none transition">
-                    <input id="checkYear" type="number" placeholder="소설 속 현재 연도" class="w-full p-3 border rounded-xl focus:ring-2 focus:ring-green-400 outline-none transition">
-                    <button onclick="checkLogic()" class="w-full bg-green-600 text-white font-bold p-3 rounded-xl hover:bg-green-700 transition active:scale-95 shadow-lg shadow-green-100">
-                        지금 확인하기
-                    </button>
+            <div class="lg:col-span-2 space-y-6">
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                    <h2 class="text-lg font-bold mb-4 text-slate-700 flex items-center gap-2">
+                        <i data-lucide="brain-circuit" class="w-5 h-5 text-green-500"></i> 실시간 설정 검문
+                    </h2>
+                    <div class="flex gap-2">
+                        <input id="checkName" type="text" placeholder="인물 이름" class="flex-1 p-2.5 border rounded-xl outline-none">
+                        <input id="checkYear" type="number" placeholder="연도" class="w-24 p-2.5 border rounded-xl outline-none">
+                        <button onclick="checkLogic()" class="bg-slate-800 text-white px-4 rounded-xl hover:bg-black transition text-sm font-bold">검사</button>
+                    </div>
+                    <div id="resultBox" class="mt-4 p-4 rounded-xl hidden text-sm"></div>
                 </div>
-                <div id="resultBox" class="mt-4 p-4 rounded-xl hidden animate-pulse"></div>
-            </div>
-        </div>
 
-        <div class="mt-10 bg-white p-8 rounded-2xl shadow-sm border border-slate-200">
-            <h2 class="text-xl font-bold mb-6 flex items-center gap-2 text-slate-700">
-                <i data-lucide="users" class="w-6 h-6 text-indigo-500"></i> 등장인물 도감
-            </h2>
-            <div id="charList" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 min-h-[400px]">
+                    <h2 class="text-lg font-bold mb-4 text-slate-700">📜 등장인물 & 관계도</h2>
+                    <div id="charGrid" class="grid grid-cols-1 sm:grid-cols-2 gap-4"></div>
                 </div>
+            </div>
         </div>
     </div>
 
     <script>
-        // 데이터 초기화 (로컬스토리지에서 불러오기)
-        let characters = JSON.parse(localStorage.getItem('story_guard_data')) || [];
+        let characters = JSON.parse(localStorage.getItem('sg_chars')) || [];
+        let relations = JSON.parse(localStorage.getItem('sg_rels')) || [];
 
-        // 아이콘 렌더링
         lucide.createIcons();
-        updateList();
+        renderAll();
 
-        // 1. 인물 추가 함수
         function addChar() {
             const name = document.getElementById('nameInput').value.trim();
             const birth = parseInt(document.getElementById('birthInput').value);
+            const trait = document.getElementById('traitInput').value.trim();
 
-            if(!name || isNaN(birth)) {
-                alert("이름과 연도를 제대로 입력해주세요, 형님!");
-                return;
-            }
-
-            characters.push({ name, birth });
-            localStorage.setItem('story_guard_data', JSON.stringify(characters));
+            if(!name || isNaN(birth)) return alert("이름과 연도를 입력하세요!");
             
+            characters.push({ name, birth, trait });
+            save();
             document.getElementById('nameInput').value = '';
             document.getElementById('birthInput').value = '';
-            updateList();
+            document.getElementById('traitInput').value = '';
+            renderAll();
         }
 
-        // 2. 리스트 업데이트
-        function updateList() {
-            const listDiv = document.getElementById('charList');
-            if(characters.length === 0) {
-                listDiv.innerHTML = '<p class="col-span-full text-slate-400 text-center py-4 text-sm">등록된 인물이 없습니다.</p>';
-                return;
-            }
+        function addRelation() {
+            const c1 = document.getElementById('char1').value;
+            const c2 = document.getElementById('char2').value;
+            const rel = document.getElementById('relationType').value.trim();
 
-            listDiv.innerHTML = characters.map((c, index) => `
-                <div class="bg-slate-50 border border-slate-100 p-3 rounded-xl flex flex-col items-center relative group">
-                    <span class="font-bold text-slate-700">${c.name}</span>
-                    <span class="text-xs text-slate-400">${c.birth}년생</span>
-                    <button onclick="deleteChar(${index})" class="absolute top-1 right-1 opacity-0 group-hover:opacity-100 text-red-400 hover:text-red-600 transition">
-                        <i data-lucide="x-circle" class="w-4 h-4"></i>
-                    </button>
-                </div>
-            `).join('');
+            if(!c1 || !c2 || !rel || c1 === c2) return alert("올바른 관계 설정을 해주세요!");
+
+            relations.push({ from: c1, to: c2, type: rel });
+            save();
+            document.getElementById('relationType').value = '';
+            renderAll();
+        }
+
+        function renderAll() {
+            // 인물 그리드 렌더링
+            const grid = document.getElementById('charGrid');
+            grid.innerHTML = characters.map((c, idx) => {
+                const myRels = relations.filter(r => r.from === c.name || r.to === c.name);
+                return `
+                    <div class="p-4 bg-slate-50 border border-slate-200 rounded-2xl hover:border-blue-300 transition group">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <span class="text-xs font-bold text-blue-500 uppercase tracking-wider">${c.trait || '일반'}</span>
+                                <h3 class="text-xl font-bold text-slate-800">${c.name}</h3>
+                                <p class="text-xs text-slate-400">${c.birth}년생</p>
+                            </div>
+                            <button onclick="deleteChar(${idx})" class="text-slate-300 hover:text-red-500 opacity-0 group-hover:opacity-100 transition">
+                                <i data-lucide="trash-2" class="w-4 h-4"></i>
+                            </button>
+                        </div>
+                        <div class="mt-3 space-y-1">
+                            ${myRels.map(r => {
+                                const target = r.from === c.name ? r.to : r.from;
+                                return `<div class="text-[11px] bg-white px-2 py-1 rounded border border-slate-100 shadow-sm text-slate-600">
+                                    <span class="font-bold text-purple-500">${r.type}</span> ➔ ${target}
+                                </div>`;
+                            }).join('')}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+
+            // 셀렉트 박스 업데이트
+            const s1 = document.getElementById('char1');
+            const s2 = document.getElementById('char2');
+            const options = characters.map(c => `<option value="${c.name}">${c.name}</option>`).join('');
+            s1.innerHTML = '<option value="">인물 1 선택</option>' + options;
+            s2.innerHTML = '<option value="">인물 2 선택</option>' + options;
+
             lucide.createIcons();
         }
 
-        // 3. 인물 삭제
-        function deleteChar(index) {
-            if(confirm("이 인물을 삭제하시겠습니까?")) {
-                characters.splice(index, 1);
-                localStorage.setItem('story_guard_data', JSON.stringify(characters));
-                updateList();
-            }
-        }
-
-        // 4. 논리 체크 로직
         function checkLogic() {
             const name = document.getElementById('checkName').value.trim();
             const year = parseInt(document.getElementById('checkYear').value);
             const resBox = document.getElementById('resultBox');
-
             const char = characters.find(c => c.name === name);
-            resBox.classList.remove('hidden', 'bg-red-50', 'bg-orange-50', 'bg-green-50', 'text-red-600', 'text-orange-600', 'text-green-600');
 
-            if(!char) {
-                resBox.innerText = "❌ 도감에 없는 인물입니다. 먼저 등록해주세요!";
-                resBox.classList.add('hidden');
-                alert("이름을 확인해주세요!");
-                return;
-            }
+            if(!char || isNaN(year)) return alert("정확한 이름과 연도를 입력하세요!");
 
             const age = year - char.birth;
+            resBox.classList.remove('hidden', 'bg-red-50', 'bg-green-50', 'text-red-600', 'text-green-600');
 
             if(age < 0) {
-                resBox.innerHTML = `<strong>⚠️ 타임 패러독스 발생!</strong><br>${name}은 ${year}년에 아직 태어나기 전입니다. (탄생까지 ${Math.abs(age)}년 남음)`;
+                resBox.innerHTML = `<strong>⚠️ 설정 오류:</strong> ${name}은 아직 태어나지 않았습니다. (탄생 ${Math.abs(age)}년 전)`;
                 resBox.classList.add('bg-red-50', 'text-red-600');
-            } else if(age > 100) {
-                resBox.innerHTML = `<strong>👵 고령 주의보!</strong><br>${year}년 기준 ${name}의 나이는 ${age}세입니다. 살아있는 게 맞는지 확인이 필요합니다!`;
-                resBox.classList.add('bg-orange-50', 'text-orange-600');
             } else {
-                resBox.innerHTML = `<strong>✅ 설정 정상</strong><br>${year}년에 ${name}은 ${age}세입니다. 아주 적절한 시기군요.`;
+                resBox.innerHTML = `<strong>✅ 정상:</strong> ${year}년에 ${name}은 <b>${age}세</b>이며, <b>[${char.trait || '정보없음'}]</b> 성격을 유지하고 있어야 합니다.`;
                 resBox.classList.add('bg-green-50', 'text-green-600');
             }
             resBox.classList.remove('hidden');
+        }
+
+        function deleteChar(idx) {
+            const name = characters[idx].name;
+            characters.splice(idx, 1);
+            relations = relations.filter(r => r.from !== name && r.to !== name);
+            save();
+            renderAll();
+        }
+
+        function save() {
+            localStorage.setItem('sg_chars', JSON.stringify(characters));
+            localStorage.setItem('sg_rels', JSON.stringify(relations));
         }
     </script>
 </body>
