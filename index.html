@@ -9,11 +9,11 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Pretendard:wght@400;600;700&display=swap');
         body { font-family: 'Pretendard', sans-serif; background-color: #f1f5f9; }
-        .relation-line { stroke: #cbd5e1; stroke-width: 2; fill: none; }
-    </script>
+    </style>
 </head>
 <body class="py-10 px-4">
     <div class="max-w-5xl mx-auto">
+        
         <div class="text-center mb-10">
             <h1 class="text-4xl font-extrabold text-slate-800 flex justify-center items-center gap-2">
                 <i data-lucide="shield-check" class="text-blue-600 w-10 h-10"></i> 스토리 가드 Pro
@@ -22,6 +22,7 @@
         </div>
 
         <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            
             <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
                 <h2 class="text-lg font-bold mb-4 flex items-center gap-2 text-slate-700">
                     <i data-lucide="user-plus" class="w-5 h-5 text-blue-500"></i> 인물 설정
@@ -46,6 +47,7 @@
             </div>
 
             <div class="lg:col-span-2 space-y-6">
+                
                 <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
                     <h2 class="text-lg font-bold mb-4 text-slate-700 flex items-center gap-2">
                         <i data-lucide="brain-circuit" class="w-5 h-5 text-green-500"></i> 실시간 설정 검문
@@ -62,17 +64,32 @@
                     <h2 class="text-lg font-bold mb-4 text-slate-700">📜 등장인물 & 관계도</h2>
                     <div id="charGrid" class="grid grid-cols-1 sm:grid-cols-2 gap-4"></div>
                 </div>
+                
             </div>
         </div>
     </div>
 
     <script>
-        let characters = JSON.parse(localStorage.getItem('sg_chars')) || [];
-        let relations = JSON.parse(localStorage.getItem('sg_rels')) || [];
+        // 1. 데이터 초기화 (에러 방어막 적용)
+        let characters = [];
+        let relations = [];
+        
+        try {
+            const savedChars = localStorage.getItem('sg_chars_v3');
+            const savedRels = localStorage.getItem('sg_rels_v3');
+            if(savedChars) characters = JSON.parse(savedChars);
+            if(savedRels) relations = JSON.parse(savedRels);
+        } catch (error) {
+            console.error("데이터 초기화 에러 발생, 데이터를 리셋합니다.");
+            characters = [];
+            relations = [];
+        }
 
+        // 2. 화면 초기 렌더링
         lucide.createIcons();
         renderAll();
 
+        // 3. 인물 추가 함수
         function addChar() {
             const name = document.getElementById('nameInput').value.trim();
             const birth = parseInt(document.getElementById('birthInput').value);
@@ -80,14 +97,16 @@
 
             if(!name || isNaN(birth)) return alert("이름과 연도를 입력하세요!");
             
-            characters.push({ name, birth, trait });
-            save();
+            characters.push({ name: name, birth: birth, trait: trait });
+            saveData();
+            
             document.getElementById('nameInput').value = '';
             document.getElementById('birthInput').value = '';
             document.getElementById('traitInput').value = '';
             renderAll();
         }
 
+        // 4. 관계 추가 함수
         function addRelation() {
             const c1 = document.getElementById('char1').value;
             const c2 = document.getElementById('char2').value;
@@ -96,41 +115,49 @@
             if(!c1 || !c2 || !rel || c1 === c2) return alert("올바른 관계 설정을 해주세요!");
 
             relations.push({ from: c1, to: c2, type: rel });
-            save();
+            saveData();
+            
             document.getElementById('relationType').value = '';
             renderAll();
         }
 
+        // 5. 전체 화면 그리기
         function renderAll() {
-            // 인물 그리드 렌더링
             const grid = document.getElementById('charGrid');
-            grid.innerHTML = characters.map((c, idx) => {
-                const myRels = relations.filter(r => r.from === c.name || r.to === c.name);
-                return `
-                    <div class="p-4 bg-slate-50 border border-slate-200 rounded-2xl hover:border-blue-300 transition group">
-                        <div class="flex justify-between items-start">
-                            <div>
-                                <span class="text-xs font-bold text-blue-500 uppercase tracking-wider">${c.trait || '일반'}</span>
-                                <h3 class="text-xl font-bold text-slate-800">${c.name}</h3>
-                                <p class="text-xs text-slate-400">${c.birth}년생</p>
-                            </div>
-                            <button onclick="deleteChar(${idx})" class="text-slate-300 hover:text-red-500 opacity-0 group-hover:opacity-100 transition">
-                                <i data-lucide="trash-2" class="w-4 h-4"></i>
-                            </button>
-                        </div>
-                        <div class="mt-3 space-y-1">
-                            ${myRels.map(r => {
-                                const target = r.from === c.name ? r.to : r.from;
-                                return `<div class="text-[11px] bg-white px-2 py-1 rounded border border-slate-100 shadow-sm text-slate-600">
-                                    <span class="font-bold text-purple-500">${r.type}</span> ➔ ${target}
-                                </div>`;
-                            }).join('')}
-                        </div>
-                    </div>
-                `;
-            }).join('');
+            
+            // 등록된 인물이 없을 때
+            if(characters.length === 0) {
+                grid.innerHTML = '<p class="col-span-full text-slate-400 text-center py-10">등록된 인물이 없습니다.</p>';
+            } else {
+                grid.innerHTML = characters.map((c, idx) => {
+                    const myRels = relations.filter(r => r.from === c.name || r.to === c.name);
+                    
+                    let relHtml = myRels.map(r => {
+                        const target = r.from === c.name ? r.to : r.from;
+                        return `<div class="text-[11px] bg-white px-2 py-1 rounded border border-slate-100 shadow-sm text-slate-600">
+                            <span class="font-bold text-purple-500">${r.type}</span> ➔ ${target}
+                        </div>`;
+                    }).join('');
 
-            // 셀렉트 박스 업데이트
+                    return `
+                        <div class="p-4 bg-slate-50 border border-slate-200 rounded-2xl hover:border-blue-300 transition group relative">
+                            <div class="flex justify-between items-start">
+                                <div>
+                                    <span class="text-xs font-bold text-blue-500 uppercase tracking-wider">${c.trait || '일반'}</span>
+                                    <h3 class="text-xl font-bold text-slate-800">${c.name}</h3>
+                                    <p class="text-xs text-slate-400">${c.birth}년생</p>
+                                </div>
+                                <button onclick="deleteChar(${idx})" class="text-slate-300 hover:text-red-500 transition cursor-pointer">
+                                    <i data-lucide="trash-2" class="w-4 h-4"></i>
+                                </button>
+                            </div>
+                            <div class="mt-3 space-y-1">${relHtml}</div>
+                        </div>
+                    `;
+                }).join('');
+            }
+
+            // 셀렉트 박스 채우기
             const s1 = document.getElementById('char1');
             const s2 = document.getElementById('char2');
             const options = characters.map(c => `<option value="${c.name}">${c.name}</option>`).join('');
@@ -140,6 +167,7 @@
             lucide.createIcons();
         }
 
+        // 6. 논리 검사
         function checkLogic() {
             const name = document.getElementById('checkName').value.trim();
             const year = parseInt(document.getElementById('checkYear').value);
@@ -149,29 +177,36 @@
             if(!char || isNaN(year)) return alert("정확한 이름과 연도를 입력하세요!");
 
             const age = year - char.birth;
-            resBox.classList.remove('hidden', 'bg-red-50', 'bg-green-50', 'text-red-600', 'text-green-600');
+            resBox.className = "mt-4 p-4 rounded-xl text-sm"; // 초기화
 
             if(age < 0) {
                 resBox.innerHTML = `<strong>⚠️ 설정 오류:</strong> ${name}은 아직 태어나지 않았습니다. (탄생 ${Math.abs(age)}년 전)`;
                 resBox.classList.add('bg-red-50', 'text-red-600');
             } else {
-                resBox.innerHTML = `<strong>✅ 정상:</strong> ${year}년에 ${name}은 <b>${age}세</b>이며, <b>[${char.trait || '정보없음'}]</b> 성격을 유지하고 있어야 합니다.`;
+                resBox.innerHTML = `<strong>✅ 정상:</strong> ${year}년에 ${name}은 <b>${age}세</b>이며, <b>[${char.trait || '정보없음'}]</b> 성격을 유지해야 합니다.`;
                 resBox.classList.add('bg-green-50', 'text-green-600');
             }
             resBox.classList.remove('hidden');
         }
 
+        // 7. 삭제
         function deleteChar(idx) {
+            if(!confirm("이 인물을 삭제하시겠습니까?")) return;
             const name = characters[idx].name;
             characters.splice(idx, 1);
             relations = relations.filter(r => r.from !== name && r.to !== name);
-            save();
+            saveData();
             renderAll();
         }
 
-        function save() {
-            localStorage.setItem('sg_chars', JSON.stringify(characters));
-            localStorage.setItem('sg_rels', JSON.stringify(relations));
+        // 8. 저장 (에러 방어막 적용)
+        function saveData() {
+            try {
+                localStorage.setItem('sg_chars_v3', JSON.stringify(characters));
+                localStorage.setItem('sg_rels_v3', JSON.stringify(relations));
+            } catch (error) {
+                console.error("데이터 저장 실패");
+            }
         }
     </script>
 </body>
