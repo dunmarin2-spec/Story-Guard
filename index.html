@@ -3,13 +3,18 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>스토리 가드 Pro (Story Guard)</title>
+    <title>스토리 가드 Pro (Story Guard) - 찬둥 에디션</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Pretendard:wght@400;600;700;800&display=swap');
+        /* 💡 필기체 스타일을 위해 나눔펜 폰트 추가 */
+        @import url('https://fonts.googleapis.com/css2?family=Pretendard:wght@400;600;700;800&family=Nanum+Pen+Script&display=swap');
+        
         body { font-family: 'Pretendard', sans-serif; background-color: #f1f5f9; overflow-x: hidden; color: #1e293b; -webkit-tap-highlight-color: transparent; }
         
+        /* 💡 찬둥의 필기체 시그니처 스타일 (B타입) */
+        .chan-doong-signature { font-family: 'Nanum Pen Script', cursive; font-size: 22px; color: #2563eb; transform: rotate(-10deg); margin-bottom: -12px; margin-left: -60px; z-index: 50; }
+
         /* 카카오페이 버튼: 모바일에서 절대 안 깨지게 고정 */
         .pay-btn {
             background-color: #FAE100;
@@ -46,7 +51,8 @@
 <body class="py-6 sm:py-10 px-4">
     <div class="max-w-5xl mx-auto flex flex-col min-h-screen">
         
-        <header class="text-center mb-8 sm:mb-12">
+        <header class="text-center mb-8 sm:mb-12 flex flex-col items-center">
+            <span class="chan-doong-signature">찬둥의</span>
             <h1 class="text-3xl sm:text-4xl font-extrabold text-slate-900 flex justify-center items-center gap-2 tracking-tighter">
                 <i data-lucide="shield-check" class="text-blue-600 w-8 h-8 sm:w-10 sm:h-10"></i> 스토리 가드 Pro
             </h1>
@@ -117,21 +123,21 @@
                 </div>
             </div>
 
-<div class="search-widget px-3 py-5 sm:px-6">
-    <p class="text-[11px] font-bold text-slate-800 mb-3 tracking-tight">창작 장비 최저가 검색</p>
-    <form action="https://www.coupang.com/np/search" method="get" target="_blank" class="flex gap-1.5">
-        <input type="hidden" name="channel" value="AF4757238">
-        
-        <input type="text" name="q" placeholder="장비 검색" class="flex-grow min-w-0 p-3 border-2 border-slate-100 rounded-xl text-xs sm:text-sm outline-none focus:border-blue-400 bg-slate-50 font-medium text-black">
-        
-        <button type="submit" class="bg-blue-600 text-white px-5 py-3 rounded-xl font-bold text-xs sm:text-sm whitespace-nowrap active:scale-95 transition cursor-pointer flex-shrink-0">
-            검색
-        </button>
-    </form>
-    <p class="text-[9px] text-slate-400 mt-4 leading-tight italic">
-        "이 검색창을 통해 구매 시 파트너스 활동의 일환으로 일정액의 수수료를 제공받습니다."
-    </p>
-</div>
+            <div class="search-widget px-3 py-5 sm:px-6">
+                <p class="text-[11px] font-bold text-slate-800 mb-3 tracking-tight">창작 장비 최저가 검색</p>
+                <form action="https://www.coupang.com/np/search" method="get" target="_blank" class="flex gap-1.5">
+                    <input type="hidden" name="channel" value="AF4757238">
+                    
+                    <input type="text" name="q" placeholder="장비 검색" class="flex-grow min-w-0 p-3 border-2 border-slate-100 rounded-xl text-xs sm:text-sm outline-none focus:border-blue-400 bg-slate-50 font-medium text-black">
+                    
+                    <button type="submit" class="bg-blue-600 text-white px-5 py-3 rounded-xl font-bold text-xs sm:text-sm whitespace-nowrap active:scale-95 transition cursor-pointer flex-shrink-0">
+                        검색
+                    </button>
+                </form>
+                <p class="text-[9px] text-slate-400 mt-4 leading-tight italic">
+                    "이 검색창을 통해 구매 시 파트너스 활동의 일환으로 일정액의 수수료를 제공받습니다."
+                </p>
+            </div>
         </footer>
     </div>
 
