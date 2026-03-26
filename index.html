@@ -11,70 +11,91 @@
         body { font-family: 'Pretendard', sans-serif; background-color: #f1f5f9; }
     </style>
 </head>
-<body class="py-10 px-4">
-    <div class="max-w-5xl mx-auto">
+<body class="py-10 px-4 text-slate-800">
+    <div class="max-w-5xl mx-auto flex flex-col min-h-screen">
         
-        <div class="text-center mb-10">
-            <h1 class="text-4xl font-extrabold text-slate-800 flex justify-center items-center gap-2">
-                <i data-lucide="shield-check" class="text-blue-600 w-10 h-10"></i> 스토리 가드 Pro
-            </h1>
-            <p class="text-slate-500 mt-2">성격과 관계까지 완벽하게 보호한다!</p>
-            
-            <div class="flex justify-center gap-3 mt-6">
-                <button onclick="exportData()" class="flex items-center gap-2 bg-slate-800 text-white px-5 py-2.5 rounded-full text-sm font-bold hover:bg-black transition shadow-lg active:scale-95">
-                    <i data-lucide="download" class="w-4 h-4"></i> 설정 백업하기
-                </button>
-                <label class="flex items-center gap-2 bg-white text-slate-700 border border-slate-300 px-5 py-2.5 rounded-full text-sm font-bold hover:bg-slate-50 transition shadow-sm cursor-pointer active:scale-95">
-                    <i data-lucide="upload" class="w-4 h-4"></i> 백업 불러오기
-                    <input type="file" accept=".json" class="hidden" onchange="importData(event)">
-                </label>
+        <div class="flex-grow text-center">
+            <div class="mb-10">
+                <h1 class="text-4xl font-extrabold text-slate-800 flex justify-center items-center gap-2">
+                    <i data-lucide="shield-check" class="text-blue-600 w-10 h-10"></i> 스토리 가드 Pro
+                </h1>
+                <p class="text-slate-500 mt-2">작가의 설정을 완벽하게 보호합니다</p>
+                
+                <div class="flex justify-center gap-3 mt-6">
+                    <button onclick="exportData()" class="flex items-center gap-2 bg-slate-800 text-white px-5 py-2.5 rounded-full text-sm font-bold hover:bg-black transition shadow-lg active:scale-95">
+                        <i data-lucide="download" class="w-4 h-4"></i> 백업
+                    </button>
+                    <label class="flex items-center gap-2 bg-white text-slate-700 border border-slate-300 px-5 py-2.5 rounded-full text-sm font-bold hover:bg-slate-50 transition shadow-sm cursor-pointer active:scale-95">
+                        <i data-lucide="upload" class="w-4 h-4"></i> 불러오기
+                        <input type="file" accept=".json" class="hidden" onchange="importData(event)">
+                    </label>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6 text-left">
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 h-fit">
+                    <h2 class="text-lg font-bold mb-4 flex items-center gap-2 text-slate-700">
+                        <i data-lucide="user-plus" class="w-5 h-5 text-blue-500"></i> 설정 등록
+                    </h2>
+                    <div class="space-y-3">
+                        <input id="nameInput" type="text" placeholder="이름" class="w-full p-2.5 border rounded-xl outline-none focus:ring-2 focus:ring-blue-400">
+                        <input id="birthInput" type="number" placeholder="출생 연도" class="w-full p-2.5 border rounded-xl outline-none focus:ring-2 focus:ring-blue-400">
+                        <input id="traitInput" type="text" placeholder="성격 키워드" class="w-full p-2.5 border rounded-xl outline-none focus:ring-2 focus:ring-blue-400">
+                        <button onclick="addChar()" class="w-full bg-blue-600 text-white font-bold p-2.5 rounded-xl hover:bg-blue-700 transition mb-6">인물 추가</button>
+                        
+                        <div class="border-t pt-4">
+                            <select id="char1" class="w-full p-2.5 border rounded-xl outline-none mb-2 text-sm"></select>
+                            <select id="char2" class="w-full p-2.5 border rounded-xl outline-none mb-2 text-sm"></select>
+                            <input id="relationType" type="text" placeholder="관계 (예: 라이벌)" class="w-full p-2.5 border rounded-xl outline-none mb-2 text-sm">
+                            <button onclick="addRelation()" class="w-full bg-purple-600 text-white font-bold p-2.5 rounded-xl hover:bg-purple-700 transition">관계 맺기</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="lg:col-span-2 space-y-6">
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
+                        <h2 class="text-lg font-bold mb-4 flex items-center gap-2">
+                            <i data-lucide="brain-circuit" class="w-5 h-5 text-green-500"></i> 설정 오류 검사
+                        </h2>
+                        <div class="flex gap-2">
+                            <input id="checkName" type="text" placeholder="인물 이름" class="flex-1 p-2.5 border rounded-xl outline-none">
+                            <input id="checkYear" type="number" placeholder="연도" class="w-24 p-2.5 border rounded-xl outline-none">
+                            <button onclick="checkLogic()" class="bg-slate-800 text-white px-6 rounded-xl font-bold hover:bg-black transition">검사</button>
+                        </div>
+                        <div id="resultBox" class="mt-4 p-4 rounded-xl hidden text-sm"></div>
+                    </div>
+
+                    <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 min-h-[300px]">
+                        <h2 class="text-lg font-bold mb-4">📜 등장인물 도감</h2>
+                        <div id="charGrid" class="grid grid-cols-1 sm:grid-cols-2 gap-4"></div>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <div class="mt-20 mb-10 text-center border-t border-slate-200 pt-10">
             
-            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-                <h2 class="text-lg font-bold mb-4 flex items-center gap-2 text-slate-700">
-                    <i data-lucide="user-plus" class="w-5 h-5 text-blue-500"></i> 인물 설정
-                </h2>
-                <div class="space-y-3">
-                    <input id="nameInput" type="text" placeholder="이름" class="w-full p-2.5 border rounded-xl outline-none focus:ring-2 focus:ring-blue-400">
-                    <input id="birthInput" type="number" placeholder="출생 연도" class="w-full p-2.5 border rounded-xl outline-none focus:ring-2 focus:ring-blue-400">
-                    <input id="traitInput" type="text" placeholder="성격 (예: 냉혈한, 정의로움)" class="w-full p-2.5 border rounded-xl outline-none focus:ring-2 focus:ring-blue-400">
-                    <button onclick="addChar()" class="w-full bg-blue-600 text-white font-bold p-2.5 rounded-xl hover:bg-blue-700 transition">등록</button>
-                </div>
-
-                <h2 class="text-lg font-bold mt-8 mb-4 flex items-center gap-2 text-slate-700 border-t pt-4">
-                    <i data-lucide="git-pull-request" class="w-5 h-5 text-purple-500"></i> 관계 설정
-                </h2>
-                <div class="space-y-3">
-                    <select id="char1" class="w-full p-2.5 border rounded-xl outline-none"></select>
-                    <div class="text-center text-xs text-slate-400 font-bold">와(과)</div>
-                    <select id="char2" class="w-full p-2.5 border rounded-xl outline-none"></select>
-                    <input id="relationType" type="text" placeholder="관계 (예: 라이벌, 부부)" class="w-full p-2.5 border rounded-xl outline-none">
-                    <button onclick="addRelation()" class="w-full bg-purple-600 text-white font-bold p-2.5 rounded-xl hover:bg-purple-700 transition">관계 맺기</button>
-                </div>
+            <div class="mb-10">
+                <p class="text-sm font-bold text-slate-600 mb-4 tracking-tight">앱이 마음에 드셨다면?</p>
+                <a href="https://qr.kakaopay.com/FRK8J0SAD" target="_blank" 
+                   class="inline-flex items-center gap-3 bg-[#FAE100] text-[#3C1E1E] px-8 py-4 rounded-2xl font-bold shadow-lg hover:brightness-95 transition active:scale-95 no-underline">
+                    <img src="https://developers.kakao.com/assets/img/about/logos/kakaopay/kakao_pay_icon.png" class="w-10" alt="카카오페이">
+                    커피 한 잔 선물하기
+                </a>
+                <p class="text-[10px] text-slate-400 mt-3 font-semibold">여러분의 후원이 더 좋은 기능을 만듭니다!</p>
             </div>
 
-            <div class="lg:col-span-2 space-y-6">
-                
-                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200">
-                    <h2 class="text-lg font-bold mb-4 text-slate-700 flex items-center gap-2">
-                        <i data-lucide="brain-circuit" class="w-5 h-5 text-green-500"></i> 실시간 설정 검문
-                    </h2>
-                    <div class="flex gap-2">
-                        <input id="checkName" type="text" placeholder="인물 이름" class="flex-1 p-2.5 border rounded-xl outline-none">
-                        <input id="checkYear" type="number" placeholder="연도" class="w-24 p-2.5 border rounded-xl outline-none">
-                        <button onclick="checkLogic()" class="bg-slate-800 text-white px-4 rounded-xl hover:bg-black transition text-sm font-bold">검사</button>
-                    </div>
-                    <div id="resultBox" class="mt-4 p-4 rounded-xl hidden text-sm"></div>
+            <div class="max-w-[600px] mx-auto overflow-hidden rounded-xl shadow-md border border-slate-100 bg-white">
+                <p class="text-[10px] text-slate-400 py-1 bg-slate-50 font-bold tracking-tight">오늘의 창작 지원템</p>
+                <div class="flex justify-center p-2">
+                    <script src="https://ads-partners.coupang.com/g.js"></script>
+                    <script>
+                        new PartnersCoupang.G({"id":975468,"template":"carousel","trackingCode":"AF4757238","width":"600","height":"150","tsource":""});
+                    </script>
                 </div>
-
-                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 min-h-[400px]">
-                    <h2 class="text-lg font-bold mb-4 text-slate-700">📜 등장인물 & 관계도</h2>
-                    <div id="charGrid" class="grid grid-cols-1 sm:grid-cols-2 gap-4"></div>
-                </div>
-                
+                <p class="text-[9px] text-slate-400 py-2 bg-slate-50 px-4 leading-tight font-medium">
+                    "이 포스팅은 쿠팡 파트너스 활동의 일환으로, 이에 따른 일정액의 수수료를 제공받습니다."
+                </p>
             </div>
         </div>
     </div>
@@ -82,15 +103,12 @@
     <script>
         let characters = [];
         let relations = [];
-        
         try {
             const savedChars = localStorage.getItem('sg_chars_v3');
             const savedRels = localStorage.getItem('sg_rels_v3');
             if(savedChars) characters = JSON.parse(savedChars);
             if(savedRels) relations = JSON.parse(savedRels);
-        } catch (error) {
-            console.error("데이터 초기화 에러 발생");
-        }
+        } catch (e) {}
 
         lucide.createIcons();
         renderAll();
@@ -99,12 +117,9 @@
             const name = document.getElementById('nameInput').value.trim();
             const birth = parseInt(document.getElementById('birthInput').value);
             const trait = document.getElementById('traitInput').value.trim();
-
-            if(!name || isNaN(birth)) return alert("이름과 연도를 입력하세요!");
-            
-            characters.push({ name: name, birth: birth, trait: trait });
+            if(!name || isNaN(birth)) return alert("이름과 연도를 정확히 입력하세요!");
+            characters.push({ name, birth, trait });
             saveData();
-            
             document.getElementById('nameInput').value = '';
             document.getElementById('birthInput').value = '';
             document.getElementById('traitInput').value = '';
@@ -115,56 +130,38 @@
             const c1 = document.getElementById('char1').value;
             const c2 = document.getElementById('char2').value;
             const rel = document.getElementById('relationType').value.trim();
-
-            if(!c1 || !c2 || !rel || c1 === c2) return alert("올바른 관계 설정을 해주세요!");
-
+            if(!c1 || !c2 || !rel || c1 === c2) return alert("연결할 인물과 관계를 설정하세요!");
             relations.push({ from: c1, to: c2, type: rel });
             saveData();
-            
             document.getElementById('relationType').value = '';
             renderAll();
         }
 
         function renderAll() {
             const grid = document.getElementById('charGrid');
-            
             if(characters.length === 0) {
                 grid.innerHTML = '<p class="col-span-full text-slate-400 text-center py-10">등록된 인물이 없습니다.</p>';
             } else {
                 grid.innerHTML = characters.map((c, idx) => {
                     const myRels = relations.filter(r => r.from === c.name || r.to === c.name);
-                    
                     let relHtml = myRels.map(r => {
                         const target = r.from === c.name ? r.to : r.from;
-                        return `<div class="text-[11px] bg-white px-2 py-1 rounded border border-slate-100 shadow-sm text-slate-600 mb-1">
-                            <span class="font-bold text-purple-500">${r.type}</span> ➔ ${target}
-                        </div>`;
+                        return `<div class="text-[11px] bg-white px-2 py-1 rounded border border-slate-100 shadow-sm text-slate-600 mb-1 leading-tight"><span class="font-bold text-purple-500">${r.type}</span> ➔ ${target}</div>`;
                     }).join('');
-
-                    return `
-                        <div class="p-4 bg-slate-50 border border-slate-200 rounded-2xl hover:border-blue-300 transition group relative">
-                            <div class="flex justify-between items-start mb-3">
-                                <div>
-                                    <span class="text-xs font-bold text-blue-500 uppercase tracking-wider">${c.trait || '일반'}</span>
-                                    <h3 class="text-xl font-bold text-slate-800">${c.name}</h3>
-                                    <p class="text-xs text-slate-400">${c.birth}년생</p>
+                    return `<div class="p-4 bg-slate-50 border border-slate-200 rounded-2xl group relative text-left">
+                                <div class="flex justify-between items-start mb-2">
+                                    <div><span class="text-[10px] font-bold text-blue-500 uppercase">${c.trait || '일반'}</span><h3 class="text-lg font-bold text-slate-800">${c.name}</h3><p class="text-[10px] text-slate-400">${c.birth}년생</p></div>
+                                    <button onclick="deleteChar(${idx})" class="text-slate-300 hover:text-red-500 transition"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
                                 </div>
-                                <button onclick="deleteChar(${idx})" class="text-slate-300 hover:text-red-500 transition cursor-pointer">
-                                    <i data-lucide="trash-2" class="w-4 h-4"></i>
-                                </button>
-                            </div>
-                            <div class="space-y-1">${relHtml}</div>
-                        </div>
-                    `;
+                                <div class="space-y-1">${relHtml}</div>
+                            </div>`;
                 }).join('');
             }
-
             const s1 = document.getElementById('char1');
             const s2 = document.getElementById('char2');
             const options = characters.map(c => `<option value="${c.name}">${c.name}</option>`).join('');
-            s1.innerHTML = '<option value="">인물 1 선택</option>' + options;
-            s2.innerHTML = '<option value="">인물 2 선택</option>' + options;
-
+            s1.innerHTML = '<option value="">인물 1</option>' + options;
+            s2.innerHTML = '<option value="">인물 2</option>' + options;
             lucide.createIcons();
         }
 
@@ -173,93 +170,55 @@
             const year = parseInt(document.getElementById('checkYear').value);
             const resBox = document.getElementById('resultBox');
             const char = characters.find(c => c.name === name);
-
-            if(!char || isNaN(year)) return alert("정확한 이름과 연도를 입력하세요!");
-
+            if(!char || isNaN(year)) return alert("등록된 이름과 연도를 입력하세요!");
             const age = year - char.birth;
             resBox.className = "mt-4 p-4 rounded-xl text-sm"; 
-
             if(age < 0) {
-                resBox.innerHTML = `<strong>⚠️ 설정 오류:</strong> ${name}은 아직 태어나지 않았습니다. (탄생 ${Math.abs(age)}년 전)`;
+                resBox.innerHTML = `⚠️ <b>오류:</b> ${name}은 아직 태어나지 않았습니다. (${Math.abs(age)}년 전)`;
                 resBox.classList.add('bg-red-50', 'text-red-600');
             } else {
-                resBox.innerHTML = `<strong>✅ 정상:</strong> ${year}년에 ${name}은 <b>${age}세</b>이며, <b>[${char.trait || '정보없음'}]</b> 성격을 유지해야 합니다.`;
+                resBox.innerHTML = `✅ <b>정상:</b> ${year}년에 ${name}은 <b>${age}세</b>입니다.`;
                 resBox.classList.add('bg-green-50', 'text-green-600');
             }
             resBox.classList.remove('hidden');
         }
 
         function deleteChar(idx) {
-            if(!confirm("이 인물을 삭제하시겠습니까?")) return;
+            if(!confirm("삭제하시겠습니까?")) return;
             const name = characters[idx].name;
             characters.splice(idx, 1);
             relations = relations.filter(r => r.from !== name && r.to !== name);
-            saveData();
-            renderAll();
+            saveData(); renderAll();
         }
 
         function saveData() {
             try {
                 localStorage.setItem('sg_chars_v3', JSON.stringify(characters));
                 localStorage.setItem('sg_rels_v3', JSON.stringify(relations));
-            } catch (error) {
-                console.error("데이터 저장 실패");
-            }
+            } catch (e) {}
         }
 
-        // ==========================================
-        // 💾 데이터 백업 및 복구 기능 추가
-        // ==========================================
-        
-        // 1. 파일 다운로드 (백업)
         function exportData() {
-            if(characters.length === 0) return alert("백업할 데이터가 없습니다!");
-            
-            const backupData = {
-                characters: characters,
-                relations: relations
-            };
-            
-            const dataStr = JSON.stringify(backupData, null, 2);
+            const dataStr = JSON.stringify({ characters, relations }, null, 2);
             const blob = new Blob([dataStr], { type: "application/json" });
             const url = URL.createObjectURL(blob);
-            
-            // 오늘 날짜로 파일명 생성
-            const today = new Date().toISOString().slice(0, 10);
-            const a = document.createElement('a');
-            a.href = url;
-            a.download = `스토리가드_백업_${today}.json`;
-            a.click();
-            
-            URL.revokeObjectURL(url);
+            const a = document.createElement('a'); a.href = url; a.download = `스토리가드_백업.json`; a.click();
         }
 
-        // 2. 파일 업로드 (복구)
         function importData(event) {
             const file = event.target.files[0];
             if (!file) return;
-
             const reader = new FileReader();
             reader.onload = function(e) {
                 try {
-                    const importedData = JSON.parse(e.target.result);
-                    
-                    // 파일 형식 검증
-                    if (importedData.characters && Array.isArray(importedData.characters)) {
-                        if(confirm("기존 데이터가 덮어씌워집니다. 복구하시겠습니까?")) {
-                            characters = importedData.characters;
-                            relations = importedData.relations || [];
-                            saveData();
-                            renderAll();
-                            alert("✅ 데이터가 성공적으로 복구되었습니다!");
-                        }
-                    } else {
-                        alert("❌ 올바른 스토리 가드 백업 파일이 아닙니다.");
+                    const data = JSON.parse(e.target.result);
+                    if (data.characters) { 
+                        characters = data.characters; 
+                        relations = data.relations || []; 
+                        saveData(); renderAll(); 
+                        alert("복구 성공!"); 
                     }
-                } catch (error) {
-                    alert("❌ 파일을 읽는 중 오류가 발생했습니다.");
-                }
-                event.target.value = ''; // 같은 파일을 다시 올려도 반응하도록 초기화
+                } catch(e) { alert("파일 형식이 틀립니다!"); }
             };
             reader.readAsText(file);
         }
