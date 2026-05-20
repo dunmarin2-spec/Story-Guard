@@ -3,23 +3,30 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>🔨 외벽방수 매칭 서비스</title>
-  <!-- 테일윈드 CSS를 링크 한 줄로 가져옵니다 -->
+  <title>가나외벽공사 - 외벽방수 매칭 서비스</title>
   <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
 </head>
 <body class="bg-gray-100 p-4 md:p-8">
 
   <div class="max-w-3xl mx-auto">
-    <!-- 헤더 -->
     <header class="mb-8 text-center">
-      <h1 class="text-3xl font-bold text-blue-600">🔨 외벽방수 매칭 서비스</h1>
-      <p class="text-gray-600 mt-2">믿을 수 있는 방수 전문가를 만나보세요</p>
+      <h1 class="text-3xl font-bold text-blue-600">🏗️ 가나외벽공사</h1>
+      <p class="text-gray-600 mt-2">무료 외벽방수/누수 진단 및 의뢰 신청</p>
     </header>
 
-    <!-- 의뢰 작성 폼 -->
     <div class="bg-white p-6 rounded-xl shadow-md mb-8">
       <h2 class="text-xl font-semibold mb-4 text-gray-800">방수 의뢰하기</h2>
       <form id="requestForm" class="space-y-4">
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">시공 지역</label>
+          <input type="text" id="location" placeholder="예: 서울시 강남구 역삼동" class="w-full p-2 border border-gray-300 rounded-md" required>
+        </div>
+
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">연락처 (전화번호)</label>
+          <input type="tel" id="phone" placeholder="예: 010-1234-5678" class="w-full p-2 border border-gray-300 rounded-md" required>
+        </div>
+
         <div>
           <label class="block text-sm font-medium text-gray-700 mb-1">건물 유형</label>
           <select id="buildingType" class="w-full p-2 border border-gray-300 rounded-md bg-white">
@@ -29,45 +36,48 @@
             <option value="상가/빌딩">상가/빌딩</option>
           </select>
         </div>
+
         <div>
           <label class="block text-sm font-medium text-gray-700 mb-1">건물 층수</label>
           <input type="text" id="floors" placeholder="예: 3층 건물 중 2층" class="w-full p-2 border border-gray-300 rounded-md" required>
         </div>
+
         <div>
           <label class="block text-sm font-medium text-gray-700 mb-1">문제 상황 설명</label>
           <textarea id="description" rows="3" placeholder="누수 부위나 필요한 작업을 상세히 적어주세요" class="w-full p-2 border border-gray-300 rounded-md" required></textarea>
         </div>
+
         <button type="submit" class="w-full bg-blue-600 text-white font-bold p-3 rounded-md hover:bg-blue-700 transition cursor-pointer">
-          의뢰 등록하기
+          가나외벽공사에 의뢰 등록하기
         </button>
       </form>
     </div>
 
-    <!-- 의뢰 리스트 영역 -->
     <div>
-      <h2 class="text-xl font-semibold mb-4 text-gray-800">실시간 방수 의뢰 현황</h2>
+      <h2 class="text-xl font-semibold mb-4 text-gray-800">실시간 접수된 의뢰 현황</h2>
       <div id="requestList" class="space-y-4">
-        <!-- 초기 예시 데이터들 -->
         <div class="bg-white p-5 rounded-xl shadow-sm border-l-4 border-blue-500">
           <div class="flex justify-between items-center mb-2">
             <span class="bg-blue-100 text-blue-800 text-xs font-semibold px-2.5 py-0.5 rounded">상가 빌딩 · 4층</span>
             <span class="text-sm text-gray-400">2026-05-21</span>
           </div>
+          <div class="text-sm text-gray-500 mb-2 font-medium">📍 지역: 서울시 마포구 합정동 | 📞 연락처: 010-XXXX-1234</div>
           <p class="text-gray-700">외벽 대리석 메지(줄눈)가 터져서 비만 오면 아래층으로 물이 샙니다. 전체적인 메지 방수 작업 견적 원합니다.</p>
         </div>
       </div>
     </div>
   </div>
 
-  <!-- 의뢰를 등록하면 리스트에 추가해주는 자바스크립트 -->
   <script>
     const form = document.getElementById('requestForm');
     const requestList = document.getElementById('requestList');
 
     form.addEventListener('submit', function(e) {
-      e.preventDefault(); // 폼 제출 시 페이지 새로고침 방지
+      e.preventDefault();
 
       // 입력된 값 가져오기
+      const location = document.getElementById('location').value;
+      const phone = document.getElementById('phone').value;
       const type = document.getElementById('buildingType').value;
       const floors = document.getElementById('floors').value;
       const desc = document.getElementById('description').value;
@@ -81,13 +91,16 @@
           <span class="bg-blue-100 text-blue-800 text-xs font-semibold px-2.5 py-0.5 rounded">${type} · ${floors}</span>
           <span class="text-sm text-gray-400">${today}</span>
         </div>
+        <div class="text-sm text-gray-500 mb-2 font-medium">📍 지역: ${location} | 📞 연락처: ${phone}</div>
         <p class="text-gray-700">${desc}</p>
       `;
 
       // 리스트 최상단에 추가하기
       requestList.insertBefore(newCard, requestList.firstChild);
 
-      // 입력창 비우기
+      // 입력창 비우기 (건물유형 제외)
+      document.getElementById('location').value = '';
+      document.getElementById('phone').value = '';
       document.getElementById('floors').value = '';
       document.getElementById('description').value = '';
     });
